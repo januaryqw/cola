@@ -48,7 +48,7 @@ static int do_insertrandom(int argc, char **argv)
 	srand(seed);
 	for(i = 0; i < count; i++) {
 #if 1
-		if ( !cola_insert(c, rand() ) ) {
+		if ( !cola_insert(c, rand(), rand() ) ) {
 #else
 		if ( !cola_insert(c, i) ) {
 #endif
@@ -97,20 +97,24 @@ static int do_insert(int argc, char **argv)
 {
 	const char *fn;
 	cola_key_t key;
+	cola_val_t val;
 	cola_t c;
 
-	if ( argc < 3 )
+	if ( argc < 4 )
 		return usage(EXIT_FAILURE);
 
 	fn = argv[1];
 	if ( !cola_parse_key(argv[2], &key) )
 		return usage(EXIT_FAILURE);
 
+	if ( !cola_parse_key(argv[3], &val) )
+		return usage(EXIT_FAILURE);
+
 	c = cola_open(fn, 1);
 	if ( NULL == c )
 		return EXIT_FAILURE;
 
-	if ( !cola_insert(c, key) ) {
+	if ( !cola_insert(c, key, val) ) {
 		cola_close(c);
 		return EXIT_FAILURE;
 	}
